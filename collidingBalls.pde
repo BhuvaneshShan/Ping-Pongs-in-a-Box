@@ -64,8 +64,10 @@ void draw() {
          for(int j=i+1;j<nbs*nbs*nbs;j++){
            if(i!=j){
              float time;
+             float secs = millis()/1000;
              time = calcBallCollisionTime(i,j);
              if(time!=-1){
+               time=time+secs;
                CollisionEvent ce = new CollisionEvent(time, i, j);
                CEventsSortedInsert(ce);
              }
@@ -76,15 +78,17 @@ void draw() {
        for(int i=0;i<nbs*nbs*nbs;i++){
          float time = -1;
          //time = calculateWallCollisionTime(i);
+         float secs = millis()/1000;
          time = calcWallCollisionTime(i);
          if(time!=-1){
-           println("i="+i+" time:"+time+";");
+           time = time+secs;
+           //println("i="+i+" time:"+time+";");
            CollisionEvent ce = new CollisionEvent(time, i, -1);
            CEventsSortedInsert(ce);
          }
        }
      }
-     CEventsDecrementTtc();
+     //CEventsDecrementTtc();
      CEventsCheckCollided();//checks if any collision event takesplace
    }
    ShowConnections();

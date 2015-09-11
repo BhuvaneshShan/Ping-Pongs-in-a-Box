@@ -21,7 +21,7 @@ void scribeMouseCoordinates() {fill(black); text("("+mouseX+","+mouseY+")",mouse
 
 //***********
 //Addtional code to implement Collsion time calculation
-//**********
+//***********
 //All the code below have been written by Bhuvanesh Shanmuga Sundaram
 
 //To store the details of collision events like Time to collision, ball1 id and ball2 id.
@@ -34,10 +34,11 @@ class CollisionEvent{
     Ttc = ttc;
   }
   void decrementTtc(){
-    this.Ttc = this.Ttc - 2*u; 
+    //this.Ttc = this.Ttc - 2*u; 
   }
   boolean isCollided(){
-    if(this.Ttc <= 3*u)
+    //if(this.Ttc <= 3*u)
+    if((millis()/1000)+2*u >= this.Ttc)
       return true;
     else 
       return false;
@@ -107,7 +108,7 @@ void CEventsCheckCollided(){
     println(m+" collidings");
     CEvents.clear();
     //Animation is stopped on first detected collision
-    //animating=!animating; 
+    animating=!animating; 
   }
 }
 
