@@ -37,11 +37,21 @@ class CollisionEvent{
     //this.Ttc = this.Ttc - 2*u; 
   }
   boolean isCollided(){
-    //if(this.Ttc <= 3*u)
-    if((millis()/1000)+2*u >= this.Ttc)
+    if((millis()/1000)+10*u >= this.Ttc || isIntersecting())
       return true;
     else 
       return false;
+  }
+  boolean isIntersecting(){
+    if(Ball2!=-1){
+      float distSq = sq(P.G[Ball1].x-P.G[Ball2].x)+sq(P.G[Ball1].y-P.G[Ball2].y)+sq(P.G[Ball1].z-P.G[Ball2].z);
+      float r = P.r[Ball1];
+      if( distSq < 4*r*r)
+        return true;
+      else 
+        return false;
+    }
+    return false;
   }
   void updatePostCollisionVelocity(){
     vec v1 = new vec(P.V[Ball1].x, P.V[Ball1].y, P.V[Ball1].z); 
@@ -50,6 +60,7 @@ class CollisionEvent{
     vec b = new vec(P.G[Ball2].x, P.G[Ball2].y, P.G[Ball2].z);
     vec BA = M(a,b); // B-A
     vec unitNormalVec = U(BA); //  BA/||BA||
+    //vec u1 = V(dot(v1,V(-1,unitNormalVec)),V(-1,unitNormalVec));
     vec u1 = V(dot(v1,unitNormalVec),unitNormalVec);
     //vec u1 = V(dot(v1,V(-1,unitNormalVec)),unitNormalVec);  // u1 = (v1.Normal)Normal   normal component of v1
     vec u2 = V(dot(v2,unitNormalVec),unitNormalVec);  // normal component of v2
@@ -58,12 +69,15 @@ class CollisionEvent{
     w1 = A(w1,u2);
     vec w2 = M(v2,u2);
     w2 = A(w2,u1);
+    
+    P.V[Ball1].x = w1.x; P.V[Ball1].y = w1.y; P.V[Ball1].y = w1.y;
+    P.V[Ball2].x = w2.x; P.V[Ball2].y = w2.y; P.V[Ball2].y = w2.y;
     /*
     println("Balls:"+Ball1+" "+Ball2);
     println("unit nomal:"+unitNormalVec.x+","+unitNormalVec.y+","+unitNormalVec.z);
     println("v1:"+v1.x+","+v1.y+","+v1.z+"; v2:"+v2.x+","+v2.y+","+v2.z);
     println("u1:"+u1.x+","+u1.y+","+u1.z+"; u2:"+u2.x+","+u2.y+","+u2.z);
-    println("w1:"+w1.x+","+w1.y+","+w1.z+"; w2:"+w2.x+","+w2.y+","+w2.z);
+    println("w1:"+P.V[Ball1].x+","+P.V[Ball1].y+","+P.V[Ball1].z+"; w2:"+P.V[Ball2].x+","+P.V[Ball2].y+","+P.V[Ball2].z);
     */
   }
 }
@@ -83,6 +97,7 @@ void CEventsSortedInsert(CollisionEvent ce){
   for (int i=0 ; i<CEvents.size(); i++) {
     if(CEvents.get(i).Ttc > ce.Ttc){
       CEvents.add(i,ce);
+      FirstCollisionTime = CEvents.get(0).Ttc;
       return;
     }
   }
@@ -108,15 +123,16 @@ void CEventsCheckCollided(){
     println(m+" collidings");
     CEvents.clear();
     //Animation is stopped on first detected collision
-    animating=!animating; 
+    //animating=!animating; 
   }
 }
 
 //Funciton to calculate the ball-ball collision time
 float calcBallCollisionTime(int a, int b){
   float r = P.r[a];
+  //println("Radius:"+r);
   /*Shortened version*/
-  /*vec a0a1 = new vec(P.G[b].x-P.G[a].x,P.G[b].y-P.G[a].y,P.G[b].z-P.G[a].z);
+  vec a0a1 = new vec(P.G[b].x-P.G[a].x,P.G[b].y-P.G[a].y,P.G[b].z-P.G[a].z);
   vec v0v1 = new vec(P.V[b].x-P.V[a].x,P.V[b].y-P.V[a].y,P.V[b].z-P.V[a].z);
   float t1 = (-1*a0a1.norm() + 2*r)/v0v1.norm();
   float t2 = (-1*a0a1.norm() - 2*r)/v0v1.norm();
@@ -126,10 +142,10 @@ float calcBallCollisionTime(int a, int b){
     }else if(t1>0) return t1;
     else if(t2>0) return t2;
     else return -1;
-  }else return -1;*/
+  }else return -1;
   
   /*Original Formula*/
-  
+  /*
   vec a0a1 = new vec(P.G[b].x-P.G[a].x,P.G[b].y-P.G[a].y,P.G[b].z-P.G[a].z);
   vec v0v1 = new vec(P.V[b].x-P.V[a].x,P.V[b].y-P.V[a].y,P.V[b].z-P.V[a].z);
   float P = v0v1.x*v0v1.x + v0v1.y*v0v1.y + v0v1.z*v0v1.z;
@@ -147,6 +163,7 @@ float calcBallCollisionTime(int a, int b){
   }else{
     return -1;
   }
+  */
 }
 
 //Function to calculate Ball-Wall collision time

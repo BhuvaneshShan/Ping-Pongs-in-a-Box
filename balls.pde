@@ -27,7 +27,6 @@ class BALLS { // class for manipulaitng and displaying points
       for (int j=0; j<nb; j++) 
         for (int k=0; k<nb; k++)
           addBall(P(d*i-w/2+dd,d*j-w/2+dd,d*k-w/2+dd),V(random(-1,1),random(-1,1),random(-1,1)),r,c);
-          //addBall(P(d*i-w/2+dd,d*j-w/2+dd,d*k-w/2+dd),V(getVel(),getVel(),getVel()),r,c);
     }
   
   float getVel(){if(random(-1,1)>=0)return 0.5; else return -0.5;}
